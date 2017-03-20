@@ -1,9 +1,9 @@
 require "./spec_helper"
 
-describe Cucumber do
+Spec2.describe Cucumber do
   # TODO: Write tests
 
   it "works" do
-    false.should eq(true)
+    expect(false).to eq(true)
   end
 end
