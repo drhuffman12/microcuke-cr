@@ -4,7 +4,20 @@
 
 Microcuke is a tiny Cucumber implementation in 500 SLOC, based on Gherkin3.
 
-.. TODO: Maybe port https://github.com/cucumber/cucumber-ruby instead?
+## STATUS
+
+- [x] boolean_expression_parser.js
+- [ ] glue
+- [ ] glue_loader
+- [ ] hook
+- [ ] pickle_loader
+- [ ] pretty_plugin
+- [ ] sequential_test_case_executor
+- [ ] source_reader
+- [ ] step_definition
+- [ ] tag_filter
+- [ ] test_case
+- [ ] test_step
 
 ## Installation
 
