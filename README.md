@@ -1,6 +1,10 @@
 # cucumber
 
-[Microcuke-Cr](https://github.com/drhuffman12/microcuke-cr) Crystal-lang implementation of [Microcuke](https://github.com/cucumber/microcuke). Microcuke is a tiny Cucumber implementation in 500 SLOC, based on Gherkin3.
+[Microcuke-Cr](https://github.com/drhuffman12/microcuke-cr) Crystal-lang implementation of [Microcuke](https://github.com/cucumber/microcuke). Microcuke-Cr is based on the [Zearin's refactor/unpromise branch](https://github.com/Zearin/microcuke/tree/refactor/unpromise).
+
+Microcuke is a tiny Cucumber implementation in 500 SLOC, based on Gherkin3.
+
+.. TODO: Maybe port https://github.com/cucumber/cucumber-ruby instead?
 
 ## Installation
 
