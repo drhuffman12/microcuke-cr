@@ -18,6 +18,7 @@ Microcuke is a tiny Cucumber implementation in 500 SLOC, based on Gherkin3.
 - [ ] tag_filter
 - [ ] test_case
 - [ ] test_step
+- [x] dockerize (crystallang/crystal image for now; maybe minideb or Alpine later?)
 
 ## Installation
 
@@ -39,7 +40,27 @@ TODO: Write usage instructions here
 
 ## Development
 
-TODO: Write development instructions here
+### Test locally:
+
+```sh
+crystal deps
+crystal spec
+```
+
+### Test via Docker:
+
+```sh
+docker-compose build
+time docker-compose up
+# .. or ..
+docker-compose run app
+```
+
+### Shell into Docker container:
+
+```sh
+docker-compose run app bash
+```
 
 ## Contributing
 

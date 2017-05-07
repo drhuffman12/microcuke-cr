@@ -1,0 +1,33 @@
+# Add Dependencies (base):
+FROM alpine:3.5
+MAINTAINER Daniel HUffman <drhuffman12@yahoo.com>
+
+# Add Dependencies (packages):
+ENV BUILD_PACKAGES bash curl-dev ruby-dev build-base
+# ENV RUBY_PACKAGES ruby ruby-io-console ruby-bundler
+ENV CRYSTAL_PACKAGES crystal
+
+## Update and install all of the required packages.
+## At the end, remove the apk cache
+RUN apk update && \
+    apk upgrade && \
+    apk add $BUILD_PACKAGES && \
+    apk add $CRYSTAL_PACKAGES && \
+    rm -rf /var/cache/apk/*
+
+RUN mkdir /usr/app
+WORKDIR /usr/app
+
+# Add folder for app:
+ENV APP_HOME /myapp
+RUN mkdir $APP_HOME
+WORKDIR $APP_HOME
+
+# Add Dependencies (Shards):
+# ADD ./shard.yml $APP_HOME/shard.yml
+# ADD ./shard.lock $APP_HOME/shard.lock
+ADD ./shard.* $APP_HOME/
+RUN crystal deps
+
+# Add app:
+ADD . $APP_HOME

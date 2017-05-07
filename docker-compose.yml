@@ -1,0 +1,9 @@
+version: '2'
+services:
+  app:
+    build: .
+    # dockerfile: Dockerfile
+    # dockerfile: Dockerfile.WIP.alpine
+    command: crystal spec
+    volumes:
+      - .:/myapp

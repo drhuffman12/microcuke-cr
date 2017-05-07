@@ -1,0 +1,105 @@
+# Add Dependencies (base):
+FROM bitnami/minideb:jessie
+MAINTAINER Daniel Huffman <drhuffman12@yahoo.com>
+
+# Add Dependencies (updates):
+RUN apt-get update && \
+    apt-get upgrade
+
+## Update and install all of the required packages.
+## At the end, remove the apk cache
+# RUN apt-get update && \
+#     apt-get upgrade && \
+#     install_packages $BUILD_PACKAGES && \
+#     install_packages $CRYSTAL_PACKAGES && \
+#     rm -rf /var/cache/apk/*
+
+# Add Dependencies (packages):
+ENV BUILD_PACKAGES bash curl-dev ruby-dev build-base
+RUN install_packages $BUILD_PACKAGES
+
+# Add Dependencies (latest Crystal):
+RUN apt-key adv --keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54
+RUN echo "deb https://dist.crystal-lang.org/apt crystal main" > /etc/apt/sources.list.d/crystal.list
+RUN apt-get update
+
+# Add Dependencies (LLVM):
+RUN deb http://apt.llvm.org/jessie/ llvm-toolchain-jessie-4.0 main
+RUN deb-src http://apt.llvm.org/jessie/ llvm-toolchain-jessie-4.0 main
+RUN wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
+  # Fingerprint: 6084 F3CF 814B 57C1 CF12 EFD5 15CF 4D18 AF4F 7421
+
+RUN install_packages clang-4.0 lldb-4.0 lld-4.0
+# RUN install_packages clang-4.0 clang-4.0-doc libclang-common-4.0-dev libclang-4.0-dev libclang1-4.0 libclang1-4.0-dbg \
+#     libllvm-4.0-ocaml-dev libllvm4.0 libllvm4.0-dbg lldb-4.0 \
+#     llvm-4.0 llvm-4.0-dev llvm-4.0-doc llvm-4.0-examples llvm-4.0-runtime \
+#     clang-format-4.0 python-clang-4.0 lldb-4.0-dev lld-4.0 libfuzzer-4.0-dev
+
+# Add Dependencies (BOEHM and dependencies):
+RUN install_packages autoreconf automake libtool make g++ diff
+
+
+# Add folder for app:
+ENV DEPS_HOME /mydeps
+RUN mkdir $DEPS_HOME
+WORKDIR $DEPS_HOME
+
+RUN git clone https://github.com/ivmai/bdwgc.git
+RUN cd bdwgc
+RUN git clone https://github.com/ivmai/libatomic_ops.git
+RUN autoreconf -vif
+RUN automake --add-missing
+RUN ./configure
+RUN make
+RUN make check
+# RUN sudo make install
+RUN make install
+
+RUN cd $DEPS_HOME && \
+    git clone https://github.com/crystal-lang/crystal.git && \
+    make && \
+    make spec && \
+    bin/crystal eval "puts 1 + 2"
+# https://github.com/crystal-lang/crystal/issues/2416
+
+# ENV RUBY_PACKAGES ruby ruby-io-console ruby-bundler
+
+# Add Dependencies (Crystal):
+ENV CRYSTAL_PACKAGES install \
+  libbsd-dev \
+  libedit-dev \
+  libevent-core-2.0-5 \
+  libevent-dev \
+  libevent-extra-2.0-5 \
+  libevent-openssl-2.0-5 \
+  libevent-pthreads-2.0-5 \
+  libgmp-dev \
+  libgmpxx4ldbl \
+  libssl-dev \
+  libxml2-dev \
+  libyaml-dev \
+  libreadline-dev \
+  automake \
+  libtool \
+  git \
+  llvm \
+  libpcre3-dev \
+  build-essential
+RUN install_packages $CRYSTAL_PACKAGES
+
+RUN mkdir /usr/app
+WORKDIR /usr/app
+
+# Add folder for app:
+ENV APP_HOME /myapp
+RUN mkdir $APP_HOME
+WORKDIR $APP_HOME
+
+# Add Dependencies (Shards):
+# ADD ./shard.yml $APP_HOME/shard.yml
+# ADD ./shard.lock $APP_HOME/shard.lock
+ADD ./shard.* $APP_HOME/
+RUN crystal deps
+
+# Add app:
+ADD . $APP_HOME
